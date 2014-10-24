@@ -222,8 +222,10 @@ App.AppRouter = Parse.Router.extend({
 
 	postsIndex: function(){
 		var posts = new App.Posts();
+		posts.fetch().then(function() {
 		console.log(posts);
-		new App.PostsIndexView({collection: posts, $container: $('.container')});
+		new App.PostsIndexView({collection: posts, $container: $('.container')});	
+		})
 	},
 
 	postsCreate: function(){
