@@ -19,6 +19,12 @@ App.Comment = Parse.Object.extend({
 });
 
 
+// COLLECTIONS
+
+App.Posts = Parse.Collection.extend({
+	model: App.Post
+});
+
 // VIEWS
 
 App.LogInView = Parse.View.extend({
@@ -124,7 +130,9 @@ App.PostsIndexView = Parse.View.extend({
 	},
 
 	render: function(){
-    	this.$el.html( this.template() );
+		console.log(this.collection);
+    	this.$el.html( this.template({posts: this.collection.toJSON()}) );
+    	console.log(this.collection);
   	}
 
 });
@@ -205,19 +213,21 @@ App.AppRouter = Parse.Router.extend({
 	},
   
 	login: function(){
-		new App.LogInView({$container: $('body')});
+		new App.LogInView({$container: $('.container')});
 	},
 
 	register: function(){
-		new App.RegisterView({$container: $('body')});
+		new App.RegisterView({$container: $('.container')});
 	},
 
 	postsIndex: function(){
-		new App.PostsIndexView({$container: $('body')});
+		var posts = new App.Posts();
+		console.log(posts);
+		new App.PostsIndexView({collection: posts, $container: $('.container')});
 	},
 
 	postsCreate: function(){
-		new App.PostsCreateView({$container: $('body')});
+		new App.PostsCreateView({$container: $('.container')});
 	},
 
 	swap: function(view){
