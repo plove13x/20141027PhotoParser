@@ -35,19 +35,19 @@ App.LogInView = Parse.View.extend({
 	    var password = this.$('.password-input').val();
 	    var username = this.$('.username-input').val();
 	 
+		Parse.User.logIn(username, password, {
+		  success: function(user) {
+		    // Do stuff after successful login.
+		    console.log('y');
+		    PPRouter.navigate('/posts/create', {trigger: true});
+		  },
+		  error: function(user, error) {
+		    // The login failed. Check error to see why.
+		    console.log('n');
+		  }
+		});
 
-Parse.User.logIn(username, password, {
-  success: function(user) {
-    // Do stuff after successful login.
-    console.log('y');
-  },
-  error: function(user, error) {
-    // The login failed. Check error to see why.
-    console.log('n');
-  }
-});
-
-	    // Parse.User.logIn(email, password).then(function(user){
+	    // Parse.User.logIn(email, password).then(function(user){			/* Didn't work! */
 	    // 	console.log(user);
 	    //   PPRouter.navigate('/posts/create', {trigger: true});
 	    // }, function(error){
@@ -125,6 +125,22 @@ App.PostsIndexView = Parse.View.extend({
 });
 
 
+App.PostsCreateView = Parse.View.extend({
+
+	template: _.template( $('[data-template-name="posts/create"]').text() ),
+  
+	initialize: function(){
+		this.render();
+	},
+
+	render: function(){
+		this.$el.html(this.template);
+		return this;
+	}	
+
+});
+
+
 // ROUTER(S)
 
 App.AppRouter = Parse.Router.extend({
@@ -135,6 +151,8 @@ App.AppRouter = Parse.Router.extend({
 		'login'			: 'login',				//	url/#login
 		'register'		: 'register',			//	url/#register
 		'posts'			: 'postsIndex',			//  url/#posts
+		'posts/create'	: 'postsCreate',		//	url/#posts/create
+
 		'setlang'		: 'renderSetLanguages',	//	url/#setlang
 		'messenger'		: 'renderMessenger'		//	url/#messenger
 	},
@@ -157,6 +175,10 @@ App.AppRouter = Parse.Router.extend({
 
 	postsIndex: function(){
 		this.swap( new App.PostsIndexView({el: 'body'}) );
+	},
+
+	postsCreate: function(){
+		this.swap( new App.PostsCreateView({el: 'body'}) );
 	},
 
 	swap: function(view){
