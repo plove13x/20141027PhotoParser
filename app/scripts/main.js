@@ -29,6 +29,7 @@ App.LogInView = Parse.View.extend({
 	},
 
 	userLogIn: function(e){
+		console.log('userLogin');
 	    e.preventDefault();
 	    Parse.User.logOut();							/* Test to see if necessary */
 	    var email = this.$('.email-input').val();
@@ -56,12 +57,13 @@ App.LogInView = Parse.View.extend({
 
 	  },
 
-	initialize: function(){
+	initialize: function(options){
+		options.$container.html(this.el);
 		this.render();
 	},
 
 	render: function(){
-		this.$el.html(this.template);
+		this.$el.html(this.template());
 		return this;
 	},
 });
@@ -93,34 +95,37 @@ App.RegisterView = Parse.View.extend({
 		  },
 		  error: function(user, error) {
 		    // Show the error message somewhere and let the user try again.
-		    alert("Error: " + error.code + " " + error.message);
+		    alert('Error: ' + error.code + ' ' + error.message);
 		  }
 		});
 	},
 
-	initialize: function(){
+	initialize: function(options){
+		options.$container.html(this.el);
 		this.render();
 	},
 
 	render: function(){
-		this.$el.html(this.template);
+		this.$el.html(this.template());
 		return this;
 	},
 });
 
 
+
+// {posts: this.collection.toJSON()}
 App.PostsIndexView = Parse.View.extend({
 
 	template: _.template( $('[data-template-name="posts/index"]').text() ),
   
-	initialize: function(){
+	initialize: function(options){
+		options.$container.html(this.el);
 		this.render();
 	},
 
 	render: function(){
-		this.$el.html(this.template);
-		return this;
-	}
+    	this.$el.html( this.template() );
+  	}
 
 });
 
@@ -129,13 +134,47 @@ App.PostsCreateView = Parse.View.extend({
 
 	template: _.template( $('[data-template-name="posts/create"]').text() ),
   
-	initialize: function(){
-		this.render();
+	initialize: function(options){
+		options.$container.html(this.el);
+		this.model = new App.Post();
+		    window.post = this.model;
+		    this.render();
+		    _.bindAll(this, 'render');
+		    this.model.on('change', this.render);
 	},
 
 	render: function(){
-		this.$el.html(this.template);
+		this.$el.html( this.template({model: this.model.toJSON()}) );
 		return this;
+	},
+
+
+	events: {
+	    'submit': 'createPost',
+	    'change input[type=file]': 'uploadFile',
+	},
+  
+	uploadFile: function(e){
+	    var file = $(e.target)[0].files[0];
+	   
+	    var parseFile = new Parse.File(file.name, file);
+	    var self = this;
+	    parseFile.save().then(function(){
+	      self.model.set('image', parseFile.url());
+	    });
+	},
+  
+	createPost: function(e){
+	    e.preventDefault();
+	    this.model.set({
+	      title: this.$('.title').val(),
+	      url: this.$('.url').val(),
+	      author: Parse.User.current()
+	    });
+	    
+	    post.save().then(function(){
+	      PPRouter.navigate('posts', {trigger: true});
+	    });
 	}	
 
 });
@@ -159,30 +198,32 @@ App.AppRouter = Parse.Router.extend({
 
 	index: function(){
 	    if(Parse.User.current()){
-	      this.navigate('posts', {trigger: true});
+	      this.navigate('/posts', {trigger: true});
 	    } else {
-	      this.navigate('login', {trigger: true});
+	      this.navigate('/login', {trigger: true});
 	    }
 	},
   
 	login: function(){
-		this.swap( new App.LogInView({el: 'body'}) );
+		new App.LogInView({$container: $('body')});
 	},
 
 	register: function(){
-		this.swap( new App.RegisterView({el: 'body'}) );
+		new App.RegisterView({$container: $('body')});
 	},
 
 	postsIndex: function(){
-		this.swap( new App.PostsIndexView({el: 'body'}) );
+		new App.PostsIndexView({$container: $('body')});
 	},
 
 	postsCreate: function(){
-		this.swap( new App.PostsCreateView({el: 'body'}) );
+		new App.PostsCreateView({$container: $('body')});
 	},
 
 	swap: function(view){
 		if (this.currentView) {
+			// this.currentView.stopListening();
+			// this.currentView.undelegateEvents();
 			this.currentView.remove();
 			this.currentView = view;
 			// this.currentView.render();

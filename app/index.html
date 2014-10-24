@@ -25,16 +25,46 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        
+
 
         Yo.
+<div class="container">
+</div>
+
+
+<!-- <ul>
+      <% _.each(posts, function(post){ %>
+        <li>
+         <%= post.title %>
+         <% if(post.image) { %>
+          <img style="width: 200px;" src="<%= post.image %>">
+        <% } %>
+        </li>
+      <% }); %>
+    </ul> -->
 
         <script type="text/template" data-template-name="posts/index">
             WOW PHOTOS SO SPECIAL!
+
+
+
+
+
         </script>
 
         <script type="text/template" data-template-name="posts/create">
             U WANT TO MAKE?
+            <form>
+                <input type="text" placeholder="URL" class="url">
+                <input type="text" placeholder="Title" class="title">
+                <input type="file" class="image">
+                <input type="submit">
+            </form>
+              
+            <% if(model.image) { %>
+            <img style="width: 200px;" src="<%= model.image %>">
+            <% } %>
+
         </script>
 
         <script type="text/template" data-template-name="login">
