@@ -27,6 +27,20 @@ App.Posts = Parse.Collection.extend({
 
 // VIEWS
 
+
+App.BaseView = Parse.View.extend({
+    template: _.template($('[data-template-name="base"]').text()),
+
+    initialize: function(){
+    	this.render();
+    },
+
+    render: function(){
+    	this.$el.html(this.template());
+    }
+
+});
+
 App.LogInView = Parse.View.extend({
 	template: _.template($('[data-template-name="login"]').text()),
 
@@ -201,6 +215,12 @@ App.AppRouter = Parse.Router.extend({
 
 		'setlang'		: 'renderSetLanguages',	//	url/#setlang
 		'messenger'		: 'renderMessenger'		//	url/#messenger
+	},
+
+	initialize: function() {
+		new App.BaseView({
+			el: 'body'
+		});
 	},
 
 	index: function(){
