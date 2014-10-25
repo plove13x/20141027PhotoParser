@@ -37,7 +37,7 @@ App.BaseView = Parse.View.extend({
 
     render: function(){
     	this.$el.html(this.template());			/* prepend vs. html? */
-    	new App.HeaderView ({
+    	window.pHeader = new App.HeaderView ({
     		$container: $('header')
     	});
     }
@@ -55,8 +55,25 @@ App.HeaderView = Parse.View.extend({
 		this.render();
 	},
 
+	events: {
+		'click .logIn': 'logIn',
+		'click .logOut': 'logOut'
+	},
+
 	render: function(){
 		this.$el.html(this.template());			/* vs. prepend? */
+	},
+
+	logIn: function() {
+		var self = this;
+		PPRouter.navigate('/login', {trigger: true});
+	},
+
+	logOut: function() {
+		Parse.User.logOut();
+		console.log('You logged out!');
+		PPRouter.navigate('/login', {trigger: true});
+		pHeader.render();
 	}
 });
 
@@ -85,7 +102,11 @@ App.LogInView = Parse.View.extend({
 		    // The login failed. Check error to see why.
 		    console.log('n');
 		  }
+		}).then(function(){
+			pHeader.render();	
 		});
+
+
 
 	    // Parse.User.logIn(email, password).then(function(user){			/* Didn't work! */
 	    // 	console.log(user);
@@ -160,6 +181,14 @@ App.PostsIndexView = Parse.View.extend({
 	initialize: function(options){
 		options.$container.html(this.el);
 		this.render();
+	},
+
+	events: {
+		'click .addPhoto': 'addPhoto'
+	},
+
+	addPhoto: function() {
+		PPRouter.navigate('/posts/create', {trigger: true});
 	},
 
 	render: function(){

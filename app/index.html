@@ -13,7 +13,7 @@
         <!-- endbuild -->
 
         <!-- build:css styles/main.css -->
-        <link rel="stylesheet" href="styles/main.scss">
+        <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
 
         <!-- build:js scripts/vendor/modernizr.js -->
@@ -27,22 +27,25 @@
 
 
 
-
-
         <script type="text/template" data-template-name="base">
             <header><button>Logout</button></header>
             <div class="container"></div>
         </script>
 
         <script type="text/template" data-template-name="headerContent">
-            <a href="">Home</a>
-            <h1>PhotoParser</h1>
-            <button>Logout</button>
+            <a href="#/">Home</a>
+            <a href="#/"><h1>PhotoParser</h1></a>
+            <% if(!Parse.User.current()) { %>
+            <button class="logIn">LogIn</button>
+            <% } else { %>
+            <button class="logOut">LogOut</button>
+            <% } %>
         </script>
 
 
         <script type="text/template" data-template-name="posts/index">
             WOW PHOTOS SO SPECIAL!
+            <button class="addPhoto">Post a new photo!</button>
 
             <ul>
               <% _.each(posts, function(post){ %>
