@@ -47,6 +47,9 @@
 
         <script type="text/template" data-template-name="otherUser/index">
 
+        <button class="follow">Follow this user</button>
+        # of Posts || # of Followers || # Following
+
             <ul>
               <% _.each(posts, function(post){ %>
                 <li>
@@ -54,9 +57,15 @@
                 <h3>
                  <%= post.title %>
                  </h3>
+
+                 <a href="">
+
                  <% if(post.image) { %>
                   <img style="width: 200px;" src="<%= post.image %>">
                 <% } %>
+
+                </a>
+
                 </div>
                 </li>
               <% }); %>
@@ -68,15 +77,24 @@
         <script type="text/template" data-template-name="posts/index">
 
             <ul>
+                <li>
+                <button class="addPhoto">Post a new photo!</button>
+                </li>
               <% _.each(posts, function(post){ %>
                 <li>
                 <div>
                 <h3>
                  <%= post.title %>
                  </h3>
+
+                 <a href="">
+
                  <% if(post.image) { %>
                   <img style="width: 200px;" src="<%= post.image %>">
                 <% } %>
+
+                </a>
+
                 </div>
                 </li>
               <% }); %>

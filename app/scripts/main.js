@@ -218,13 +218,13 @@ App.PostsIndexView = Parse.View.extend({
 		this.render();
 	},
 
-	// events: {
-	// 	'click .addPhoto': 'addPhoto'
-	// },
+	events: {
+		'click .addPhoto': 'addPhoto'
+	},
 
-	// addPhoto: function() {
-	// 	PPRouter.navigate('/posts/create', {trigger: true});
-	// },
+	addPhoto: function() {
+		PPRouter.navigate('/posts/create', {trigger: true});
+	},
 
 	render: function(){
 		console.log(this.collection);
