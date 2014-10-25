@@ -46,7 +46,7 @@ App.LogInView = Parse.View.extend({
 		  success: function(user) {
 		    // Do stuff after successful login.
 		    console.log('y');
-		    PPRouter.navigate('/posts/create', {trigger: true});
+		    PPRouter.navigate('/posts', {trigger: true});
 		  },
 		  error: function(user, error) {
 		    // The login failed. Check error to see why.
@@ -220,12 +220,23 @@ App.AppRouter = Parse.Router.extend({
 	},
 
 	postsIndex: function(){
-		var posts = new App.Posts();
-		var self = this;
-		posts.fetch().then(function() {
-		console.log(posts);
-		self.swap ( new App.PostsIndexView({collection: posts, $container: $('.container')}) );	
-		})
+		// var posts = new App.Posts();
+		// var self = this;
+		// posts.fetch().then(function() {
+		// console.log(posts);
+		// self.swap ( new App.PostsIndexView({collection: posts, $container: $('.container')}) );	
+		// })
+
+		var query = new Parse.Query(App.Post);
+		    query.equalTo('author', Parse.User.current());
+		    var collection = query.collection();
+		    var self = this;
+		    collection.fetch().then(function(){
+		      self.swap ( new App.PostsIndexView({
+		        collection: collection,
+		        $container: $('.container')
+		      }) );
+		    });
 	},
 
 	postsCreate: function(){
