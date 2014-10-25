@@ -36,9 +36,28 @@ App.BaseView = Parse.View.extend({
     },
 
     render: function(){
-    	this.$el.html(this.template());
+    	this.$el.html(this.template());			/* prepend vs. html? */
+    	new App.HeaderView ({
+    		$container: $('header')
+    	});
     }
 
+});
+
+App.HeaderView = Parse.View.extend({
+	template: _.template($('[data-template-name="headerContent"]').html()),
+
+	initialize: function(opts){
+		var options = _.defaults({}, opts, {
+            $container: opts.$container
+        });
+		options.$container.html(this.el);		/* vs. append? */
+		this.render();
+	},
+
+	render: function(){
+		this.$el.html(this.template());			/* vs. prepend? */
+	}
 });
 
 App.LogInView = Parse.View.extend({
