@@ -14,6 +14,10 @@ App.Post = Parse.Object.extend({
   className: 'post'
 });
 
+App.User = Parse.Object.extend({
+  className: 'User'
+});
+
 App.Comment = Parse.Object.extend({
   className: 'comment'
 });
@@ -260,6 +264,7 @@ App.AppRouter = Parse.Router.extend({
 		'register'		: 'register',			//	url/#register
 		'posts'			: 'postsIndex',			//  url/#posts
 		'posts/create'	: 'postsCreate',		//	url/#posts/create
+		':author_id'	: 'userIndex',
 
 		'setlang'		: 'renderSetLanguages',	//	url/#setlang
 		'messenger'		: 'renderMessenger'		//	url/#messenger
@@ -298,6 +303,27 @@ App.AppRouter = Parse.Router.extend({
 		var query = new Parse.Query(App.Post);
 		    query.equalTo('author', Parse.User.current());
 		    var collection = query.collection();
+		    var self = this;
+		    collection.fetch().then(function(){
+		      self.swap ( new App.PostsIndexView({
+		        collection: collection,
+		        $container: $('.container')
+		      }) );
+		    });
+	},
+
+	userIndex: function(user){
+		// var query = new Parse.Query(App.Post);
+		//     query.equalTo('author', user_id);
+
+			var userQuery = new Parse.Query(App.User);
+            userQuery.equalTo('objectId', user);
+
+            var postQuery = new Parse.Query(App.Post);
+            postQuery.matchesQuery('author', userQuery);
+
+
+		    var collection = postQuery.collection();
 		    var self = this;
 		    collection.fetch().then(function(){
 		      self.swap ( new App.PostsIndexView({
