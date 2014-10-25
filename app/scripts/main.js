@@ -156,7 +156,6 @@ App.PostsCreateView = Parse.View.extend({
 		return this;
 	},
 
-
 	events: {
 	    'submit': 'createPost',
 	    'change input[type=file]': 'uploadFile',
@@ -213,23 +212,24 @@ App.AppRouter = Parse.Router.extend({
 	},
   
 	login: function(){
-		new App.LogInView({$container: $('.container')});
+		this.swap ( new App.LogInView({$container: $('.container')}) );
 	},
 
 	register: function(){
-		new App.RegisterView({$container: $('.container')});
+		this.swap ( new App.RegisterView({$container: $('.container')}) );
 	},
 
 	postsIndex: function(){
 		var posts = new App.Posts();
+		var self = this;
 		posts.fetch().then(function() {
 		console.log(posts);
-		new App.PostsIndexView({collection: posts, $container: $('.container')});	
+		self.swap ( new App.PostsIndexView({collection: posts, $container: $('.container')}) );	
 		})
 	},
 
 	postsCreate: function(){
-		new App.PostsCreateView({$container: $('.container')});
+		this.swap ( new App.PostsCreateView({$container: $('.container')}) );
 	},
 
 	swap: function(view){

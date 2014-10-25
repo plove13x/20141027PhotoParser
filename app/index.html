@@ -30,7 +30,7 @@
 
 <!--    -->
 
-
+<button>Logout</button>
 <div class="container">
 </div>
 
@@ -38,17 +38,16 @@
         <script type="text/template" data-template-name="posts/index">
             WOW PHOTOS SO SPECIAL!
 
-    <ul>
-      <% _.each(posts, function(post){ %>
-        <li>
-         <%= post.title %>
-         <% if(post.image) { %>
-          <img style="width: 200px;" src="<%= post.image %>">
-        <% } %>
-        </li>
-      <% }); %>
-    </ul>
-
+            <ul>
+              <% _.each(posts, function(post){ %>
+                <li>
+                 <%= post.title %>
+                 <% if(post.image) { %>
+                  <img style="width: 200px;" src="<%= post.image %>">
+                <% } %>
+                </li>
+              <% }); %>
+            </ul>
 
         </script>
 
