@@ -48,9 +48,25 @@ body {
 // PDL Styles
 
 header {
-    
+    margin: 0 auto;
+    text-align: center;
+
     h1 {
         display: inline-block;
+    }
+}
+
+.container {
+    li {
+        display: inline;
+        list-style-type: none; 
+    }
+    li div {
+       display: inline-block;
+    }
+
+    li div h3 {
+        text-align: center;
     }
 }
 

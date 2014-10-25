@@ -61,11 +61,16 @@ App.HeaderView = Parse.View.extend({
 
 	events: {
 		'click .logIn': 'logIn',
-		'click .logOut': 'logOut'
+		'click .logOut': 'logOut',
+		'click .addPhoto': 'addPhoto'
 	},
 
 	render: function(){
 		this.$el.html(this.template());			/* vs. prepend? */
+	},
+
+	addPhoto: function() {
+		PPRouter.navigate('/posts/create', {trigger: true});
 	},
 
 	logIn: function() {
@@ -178,8 +183,32 @@ App.RegisterView = Parse.View.extend({
 });
 
 
+App.OtherUserIndexView = Parse.View.extend({
 
-// {posts: this.collection.toJSON()}
+	template: _.template( $('[data-template-name="otherUser/index"]').text() ),
+  
+	initialize: function(options){
+		options.$container.html(this.el);
+		this.render();
+	},
+
+	// events: {
+	// 	'click .addPhoto': 'addPhoto'
+	// },
+
+	// addPhoto: function() {
+	// 	PPRouter.navigate('/posts/create', {trigger: true});
+	// },
+
+	render: function(){
+		console.log(this.collection);
+    	this.$el.html( this.template({posts: this.collection.toJSON()}) );
+    	console.log(this.collection);
+  	}
+
+});
+
+
 App.PostsIndexView = Parse.View.extend({
 
 	template: _.template( $('[data-template-name="posts/index"]').text() ),
@@ -189,13 +218,13 @@ App.PostsIndexView = Parse.View.extend({
 		this.render();
 	},
 
-	events: {
-		'click .addPhoto': 'addPhoto'
-	},
+	// events: {
+	// 	'click .addPhoto': 'addPhoto'
+	// },
 
-	addPhoto: function() {
-		PPRouter.navigate('/posts/create', {trigger: true});
-	},
+	// addPhoto: function() {
+	// 	PPRouter.navigate('/posts/create', {trigger: true});
+	// },
 
 	render: function(){
 		console.log(this.collection);
@@ -239,23 +268,23 @@ App.PostsCreateView = Parse.View.extend({
 	    });
 	},
   
+
 	createPost: function(e){
 	    e.preventDefault();
 
-	 	// var query = new Parse.Query(App.User);					THROWS AN ERROR SO SET window.uzer on login...
-		// query.equalTo('username', Parse.User.current());
+	    // var query = new Parse.Query(App.User);				MAXIMUM CALL STACK EXCEEDED, COULDN'T GET IT WITH .THEN EITHER, THUS DOUBLE QUERY IN USERINDEX...
+	    // query.equalTo('username', Parse.User.current());
 
 	    this.model.set({
-	      title: this.$('.title').val(),
-	      url: this.$('.url').val(),
-	      author: Parse.User.current(),
-	      authorName: window.uzer
+	       title: this.$('.title').val(),
+	       url: this.$('.url').val(),
+	       author: Parse.User.current(),
+	       // authorName: query
 	    });
-	    
 	    post.save().then(function(){
-	      PPRouter.navigate('posts', {trigger: true});
+	       PPRouter.navigate('posts', {trigger: true});
 	    });
-	}	
+	}
 
 });
 
@@ -271,7 +300,7 @@ App.AppRouter = Parse.Router.extend({
 		'register'		: 'register',			//	url/#register
 		'posts'			: 'postsIndex',			//  url/#posts
 		'posts/create'	: 'postsCreate',		//	url/#posts/create
-		':author_id'	: 'userIndex',
+		':authorName'	: 'otherUserIndex',		//  url/#:authorName
 
 		'setlang'		: 'renderSetLanguages',	//	url/#setlang
 		'messenger'		: 'renderMessenger'		//	url/#messenger
@@ -299,6 +328,26 @@ App.AppRouter = Parse.Router.extend({
 		this.swap ( new App.RegisterView({$container: $('.container')}) );
 	},
 
+	otherUserIndex: function(user){
+		// var query = new Parse.Query(App.Post);			WOULD BE PREFERABLE IF I COULD SUBMIT AUTHORNAME UPON SAVING A POST...
+	 //    query.equalTo('authorName', user);
+
+		var userQuery = new Parse.Query(App.User);		
+		userQuery.equalTo('username', user);
+
+		var postQuery = new Parse.Query(App.Post);
+		postQuery.matchesQuery('author', userQuery);
+
+	    var collection = postQuery.collection();
+	    var self = this;
+	    collection.fetch().then(function(){
+	      self.swap ( new App.OtherUserIndexView({
+	        collection: collection,
+	        $container: $('.container')
+	      }) );
+	    });
+	},
+
 	postsIndex: function(){
 		// var posts = new App.Posts();
 		// var self = this;
@@ -317,26 +366,6 @@ App.AppRouter = Parse.Router.extend({
 		        $container: $('.container')
 		      }) );
 		    });
-	},
-
-	userIndex: function(user){
-		var query = new Parse.Query(App.Post);
-	    query.equalTo('authorName', user);
-
-		// var userQuery = new Parse.Query(App.User);		ALTERNATE METHOD TO ABOVE AND WINDOW.UZER...
-		// userQuery.equalTo('username', user);
-
-		// var postQuery = new Parse.Query(App.Post);
-		// postQuery.matchesQuery('author', userQuery);
-
-	    var collection = query.collection();
-	    var self = this;
-	    collection.fetch().then(function(){
-	      self.swap ( new App.PostsIndexView({
-	        collection: collection,
-	        $container: $('.container')
-	      }) );
-	    });
 	},
 
 	postsCreate: function(){

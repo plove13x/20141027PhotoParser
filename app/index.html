@@ -33,7 +33,9 @@
         </script>
 
         <script type="text/template" data-template-name="headerContent">
-            <a href="#/">Home</a>
+            <% if (Parse.User.current()) { %>
+                <button class="addPhoto">Post a new photo!</button>
+            <% } %>
             <a href="#/"><h1>PhotoParser</h1></a>
             <% if(!Parse.User.current()) { %>
             <button class="logIn">LogIn</button>
@@ -43,22 +45,45 @@
         </script>
 
 
-        <script type="text/template" data-template-name="posts/index">
-            WOW PHOTOS SO SPECIAL!
-            <button class="addPhoto">Post a new photo!</button>
+        <script type="text/template" data-template-name="otherUser/index">
 
             <ul>
               <% _.each(posts, function(post){ %>
                 <li>
+                <div>
+                <h3>
                  <%= post.title %>
+                 </h3>
                  <% if(post.image) { %>
                   <img style="width: 200px;" src="<%= post.image %>">
                 <% } %>
+                </div>
                 </li>
               <% }); %>
             </ul>
 
         </script>
+
+
+        <script type="text/template" data-template-name="posts/index">
+
+            <ul>
+              <% _.each(posts, function(post){ %>
+                <li>
+                <div>
+                <h3>
+                 <%= post.title %>
+                 </h3>
+                 <% if(post.image) { %>
+                  <img style="width: 200px;" src="<%= post.image %>">
+                <% } %>
+                </div>
+                </li>
+              <% }); %>
+            </ul>
+
+        </script>
+
 
         <script type="text/template" data-template-name="posts/create">
             U WANT TO MAKE?
