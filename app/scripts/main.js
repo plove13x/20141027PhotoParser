@@ -15,7 +15,7 @@ App.Post = Parse.Object.extend({
 });
 
 App.User = Parse.Object.extend({
-  className: 'User'
+  className: 'User'				/* Where is some documentatio that shows why this has to be uppercase for userIndex view to function correctly? I get that "User" is a special object (class?) type in Parse, but where am I even referencing the className? */
 });
 
 App.Comment = Parse.Object.extend({
@@ -75,7 +75,8 @@ App.HeaderView = Parse.View.extend({
 
 	logOut: function() {
 		Parse.User.logOut();
-		console.log('You logged out!');
+		window.uzer = null;
+		console.log('You logged out! Current user is: ' + window.uzer);
 		PPRouter.navigate('/login', {trigger: true});
 		pHeader.render();
 	}
@@ -99,7 +100,8 @@ App.LogInView = Parse.View.extend({
 		Parse.User.logIn(username, password, {
 		  success: function(user) {
 		    // Do stuff after successful login.
-		    console.log('y');
+		    console.log(username);
+		    window.uzer = username;
 		    PPRouter.navigate('/posts', {trigger: true});
 		  },
 		  error: function(user, error) {
@@ -239,10 +241,15 @@ App.PostsCreateView = Parse.View.extend({
   
 	createPost: function(e){
 	    e.preventDefault();
+
+	 	// var query = new Parse.Query(App.User);					THROWS AN ERROR SO SET window.uzer on login...
+		// query.equalTo('username', Parse.User.current());
+
 	    this.model.set({
 	      title: this.$('.title').val(),
 	      url: this.$('.url').val(),
-	      author: Parse.User.current()
+	      author: Parse.User.current(),
+	      authorName: window.uzer
 	    });
 	    
 	    post.save().then(function(){
@@ -313,24 +320,23 @@ App.AppRouter = Parse.Router.extend({
 	},
 
 	userIndex: function(user){
-		// var query = new Parse.Query(App.Post);
-		//     query.equalTo('author', user_id);
+		var query = new Parse.Query(App.Post);
+	    query.equalTo('authorName', user);
 
-			var userQuery = new Parse.Query(App.User);
-            userQuery.equalTo('objectId', user);
+		// var userQuery = new Parse.Query(App.User);		ALTERNATE METHOD TO ABOVE AND WINDOW.UZER...
+		// userQuery.equalTo('username', user);
 
-            var postQuery = new Parse.Query(App.Post);
-            postQuery.matchesQuery('author', userQuery);
+		// var postQuery = new Parse.Query(App.Post);
+		// postQuery.matchesQuery('author', userQuery);
 
-
-		    var collection = postQuery.collection();
-		    var self = this;
-		    collection.fetch().then(function(){
-		      self.swap ( new App.PostsIndexView({
-		        collection: collection,
-		        $container: $('.container')
-		      }) );
-		    });
+	    var collection = query.collection();
+	    var self = this;
+	    collection.fetch().then(function(){
+	      self.swap ( new App.PostsIndexView({
+	        collection: collection,
+	        $container: $('.container')
+	      }) );
+	    });
 	},
 
 	postsCreate: function(){
