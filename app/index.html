@@ -78,7 +78,11 @@
 
 
         <script type="text/template" data-template-name="photoListItem">
-            <a href=""><img style="width: 200px;" src="<%= post.image %>" /></a>
+            <a href="#/post/<%= post.objectId %>"><img style="width: 200px;" src="<%= post.image %>" /></a>
+        </script>
+
+        <script type="text/template" data-template-name="singlePhoto">
+            Hi. <img src='<%= post.image %>' />
         </script>
 
 

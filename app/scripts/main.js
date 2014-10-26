@@ -323,17 +323,21 @@ App.PostsCreateView = Parse.View.extend({
 });
 
 
-// App.SinglePhotoView = Parse.View.extend({
-// 	template: _.template( $('') ),
+App.SinglePhotoView = Parse.View.extend({
+	template: _.template( $('[data-template-name="singlePhoto"]').text() ),
 
-// 	initialize: function(){
-// 		this.render();
-// 	},
+	initialize: function(opts){
+		var options = _.defaults({}, opts, {
+            $container: opts.$container
+        });
+        options.$container.html(this.el);
+		this.render();
+	},
 
-// 	render: function(){
-// 		this.$el.html( this.template({model: }));
-// 	}
-// });
+	render: function(){
+		this.$el.html( this.template({post: this.model.toJSON() }));
+	}
+});
 
 
 // ROUTER(S)
@@ -348,6 +352,7 @@ App.AppRouter = Parse.Router.extend({
 		'posts'			: 'postsIndex',			//  url/#posts
 		'posts/create'	: 'postsCreate',		//	url/#posts/create
 		':authorName'	: 'otherUserIndex',		//  url/#:authorName
+		'post/:post_id'	: 'post',
 
 		'setlang'		: 'renderSetLanguages',	//	url/#setlang
 		'messenger'		: 'renderMessenger'		//	url/#messenger
@@ -393,6 +398,17 @@ App.AppRouter = Parse.Router.extend({
 	        $container: $('.container')
 	      }) );
 	    });
+	},
+
+	post: function(post_id){
+		var query = new Parse.Query(App.Post);
+		query.equalTo('objectId', post_id);
+		query.first().then(function(post){
+			new App.SinglePhotoView({
+				$container: $('.container'),
+				model: post
+			});
+		})
 	},
 
 	postsIndex: function(){
