@@ -45,10 +45,11 @@
         </script>
 
 
+
         <script type="text/template" data-template-name="otherUser/index">
 
-        <button class="follow">Follow this user</button>
-        # of Posts || # of Followers || # Following
+            <button class="follow">Follow this user</button>
+            # of Posts || # of Followers || # Following
 
             <ul>
               <% _.each(posts, function(post){ %>
@@ -71,6 +72,13 @@
               <% }); %>
             </ul>
 
+        </script>
+
+
+
+
+        <script type="text/template" data-template-name="photoListItem">
+            <a href=""><img style="width: 200px;" src="<%= post.image %>" /></a>
         </script>
 
 

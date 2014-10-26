@@ -185,7 +185,9 @@ App.RegisterView = Parse.View.extend({
 
 App.OtherUserIndexView = Parse.View.extend({
 
-	template: _.template( $('[data-template-name="otherUser/index"]').text() ),
+	// template: _.template( $('[data-template-name="otherUser/index"]').text() ),
+
+	tagName: 'ul',
   
 	initialize: function(options){
 		options.$container.html(this.el);
@@ -201,12 +203,44 @@ App.OtherUserIndexView = Parse.View.extend({
 	// },
 
 	render: function(){
-		console.log(this.collection);
-    	this.$el.html( this.template({posts: this.collection.toJSON()}) );
-    	console.log(this.collection);
+		this.collection.each(_.bind(this.renderChild, this));
+		// console.log(this.collection);
+  //   	this.$el.html( this.template({posts: this.collection.toJSON()}) );
+  //   	console.log(this.collection);
+  	},
+
+  	renderChild: function(post){
+	    var itemView = new App.IndexPhotoListItemView({ model: post, $container: this.$el });
+	    // itemView.render();
+	    this.$el.append(itemView.el);
   	}
 
 });
+
+
+
+
+App.IndexPhotoListItemView = Parse.View.extend({
+
+	tagName: 'li',
+	template: _.template($('[data-template-name="photoListItem"]').text()),
+
+	initialize: function(opts) {
+		var options = _.defaults({}, opts, {
+            $container: opts.$container
+        });
+        // options.$container.append(this.el);
+		this.render();
+	},
+
+	render: function() {
+		this.$el.prepend(this.template({
+			post: this.model.toJSON()
+		}));
+	}
+});
+
+
 
 
 App.PostsIndexView = Parse.View.extend({
@@ -287,6 +321,19 @@ App.PostsCreateView = Parse.View.extend({
 	}
 
 });
+
+
+// App.SinglePhotoView = Parse.View.extend({
+// 	template: _.template( $('') ),
+
+// 	initialize: function(){
+// 		this.render();
+// 	},
+
+// 	render: function(){
+// 		this.$el.html( this.template({model: }));
+// 	}
+// });
 
 
 // ROUTER(S)
