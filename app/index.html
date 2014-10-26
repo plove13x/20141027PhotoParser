@@ -106,9 +106,12 @@
         <script type="text/template" data-template-name="posts/create">
             U WANT TO MAKE?
             <form>
+                <input type="file" class="image">
+                <% if(model.image) { %>
                 <input type="text" placeholder="URL" class="url">
                 <input type="text" placeholder="Title" class="title">
-                <input type="file" class="image">
+                <% } %>
+
                 <input type="submit">
             </form>
               
