@@ -12,7 +12,10 @@ App.Routers = {};
 // MODELS
 
 App.Post = Parse.Object.extend({
-  className: 'post'
+  className: 'post',
+  defaults: {
+  	likes: 0
+  }
 });
 
 App.User = Parse.Object.extend({
@@ -339,10 +342,16 @@ App.SinglePhotoView = Parse.View.extend({
 
 	events: {
 		'click .composeComment': 'composeComment',
+		'click .like': 'like'
 	},
 
 	composeComment: function() {
 		new App.CommentFormView({$container: $('aside'), model: this.model});
+	},
+
+	like: function() {
+		this.model.increment('likes');
+        this.model.save();
 	},
 
 	render: function(){
@@ -447,12 +456,22 @@ App.AppRouter = Parse.Router.extend({
 	},
 
 	post: function(post_id){
+
+		// var query = new Parse.Query(App.Post);
+		// query.equalTo('objectId', post_id);
+
+		// var commentQuery = new Parse.Query(App.Comment);
+		// commentQuery.matchesQuery('post', query); 
+		// var collection = commentQuery.collection();
+		// collection.fetch();
+
 		var query = new Parse.Query(App.Post);
 		query.equalTo('objectId', post_id);
 		query.first().then(function(post){
 			new App.SinglePhotoView({					// Institute Swap?
 				$container: $('.container'),
-				model: post
+				model: post,
+				// collection: collection
 			});
 		})
 	},
