@@ -1,6 +1,7 @@
 (function(){
 'use strict';
 
+
 window.App = {};					/* UNNECESSARY/INAPPROPRIATE IN PARSE? OR DO YOU JUST PREFER var IN JSBIN? */
 App.Models = {};
 App.Collections = {};
@@ -15,7 +16,7 @@ App.Post = Parse.Object.extend({
 });
 
 App.User = Parse.Object.extend({
-  className: 'User'				/* Where is some documentatio that shows why this has to be uppercase for userIndex view to function correctly? I get that "User" is a special object (class?) type in Parse, but where am I even referencing the className? */
+  className: 'User'				/* Where is some documentation that shows why this has to be uppercase for userIndex view to function correctly? I get that "User" is a special object (class?) type in Parse, but where am I even referencing the className? */
 });
 
 App.Comment = Parse.Object.extend({
@@ -29,24 +30,27 @@ App.Posts = Parse.Collection.extend({
 	model: App.Post
 });
 
-// VIEWS
 
+// VIEWS
 
 App.BaseView = Parse.View.extend({
     template: _.template($('[data-template-name="base"]').text()),
 
     initialize: function(){
+    	this.model = Parse.User.current();
     	this.render();
     },
 
     render: function(){
     	this.$el.html(this.template());			/* prepend vs. html? */
     	window.pHeader = new App.HeaderView ({
-    		$container: $('header')
+    		$container: $('header'),
+    		model: this.model
     	});
     }
 
 });
+
 
 App.HeaderView = Parse.View.extend({
 	template: _.template($('[data-template-name="headerContent"]').html()),
@@ -66,6 +70,7 @@ App.HeaderView = Parse.View.extend({
 	},
 
 	render: function(){
+		this.model = Parse.User.current();
 		this.$el.html(this.template());			/* vs. prepend? */
 	},
 
@@ -76,16 +81,18 @@ App.HeaderView = Parse.View.extend({
 	logIn: function() {
 		var self = this;
 		PPRouter.navigate('/login', {trigger: true});
+		pHeader.render();
 	},
 
 	logOut: function() {
 		Parse.User.logOut();
-		window.uzer = null;
-		console.log('You logged out! Current user is: ' + window.uzer);
+		// window.uzer = null;
+		// console.log('You logged out! Current user is: ' + window.uzer);
 		PPRouter.navigate('/login', {trigger: true});
 		pHeader.render();
 	}
 });
+
 
 App.LogInView = Parse.View.extend({
 	template: _.template($('[data-template-name="login"]').text()),
@@ -185,7 +192,7 @@ App.RegisterView = Parse.View.extend({
 
 App.OtherUserIndexView = Parse.View.extend({
 
-	// template: _.template( $('[data-template-name="otherUser/index"]').text() ),
+	template: _.template( $('[data-template-name="otherUser/index"]').text() ),
 
 	tagName: 'ul',
   
@@ -205,7 +212,7 @@ App.OtherUserIndexView = Parse.View.extend({
 	render: function(){
 		this.collection.each(_.bind(this.renderChild, this));
 		// console.log(this.collection);
-  //   	this.$el.html( this.template({posts: this.collection.toJSON()}) );
+    	this.$el.prepend( this.template({posts: this.collection.toJSON()}) );
   //   	console.log(this.collection);
   	},
 
@@ -216,8 +223,6 @@ App.OtherUserIndexView = Parse.View.extend({
   	}
 
 });
-
-
 
 
 App.IndexPhotoListItemView = Parse.View.extend({
@@ -241,8 +246,6 @@ App.IndexPhotoListItemView = Parse.View.extend({
 });
 
 
-
-
 App.PostsIndexView = Parse.View.extend({
 
 	template: _.template( $('[data-template-name="posts/index"]').text() ),
@@ -252,13 +255,13 @@ App.PostsIndexView = Parse.View.extend({
 		this.render();
 	},
 
-	events: {
-		'click .addPhoto': 'addPhoto'
-	},
+	// events: {
+	// 	'click .addPhoto': 'addPhoto'
+	// },
 
-	addPhoto: function() {
-		PPRouter.navigate('/posts/create', {trigger: true});
-	},
+	// addPhoto: function() {
+	// 	PPRouter.navigate('/posts/create', {trigger: true});
+	// },
 
 	render: function(){
 		console.log(this.collection);
@@ -334,9 +337,52 @@ App.SinglePhotoView = Parse.View.extend({
 		this.render();
 	},
 
+	events: {
+		'click .composeComment': 'composeComment',
+	},
+
+	composeComment: function() {
+		new App.CommentFormView({$container: $('aside'), model: this.model});
+	},
+
 	render: function(){
 		this.$el.html( this.template({post: this.model.toJSON() }));
 	}
+});
+
+
+App.CommentFormView = Parse.View.extend({
+
+	tagName: 'form',
+	template: _.template( $('[data-template-name="commentForm"]').text() ),
+
+	initialize: function(opts) {
+		var options = _.defaults({}, opts, {
+            $container: opts.$container
+        });
+		options.$container.append(this.el);
+		this.render();
+	},
+
+	events: {
+		'submit': 'submitComment',
+	},
+
+	submitComment: function(e){
+		e.preventDefault();
+		var post = this.model;
+		var commentBody = this.$('.commentBody').val();
+		var comment = new App.Comment();
+		comment.set('post', post);
+		comment.set('commentBody', commentBody);
+		comment.set('author', Parse.User.current());
+		comment.save();
+		this.remove();
+	},
+
+	render: function(){
+		this.$el.html( this.template({}) );
+	},
 });
 
 
@@ -404,7 +450,7 @@ App.AppRouter = Parse.Router.extend({
 		var query = new Parse.Query(App.Post);
 		query.equalTo('objectId', post_id);
 		query.first().then(function(post){
-			new App.SinglePhotoView({
+			new App.SinglePhotoView({					// Institute Swap?
 				$container: $('.container'),
 				model: post
 			});

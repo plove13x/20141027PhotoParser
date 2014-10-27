@@ -32,8 +32,10 @@
             <div class="container"></div>
         </script>
 
+
         <script type="text/template" data-template-name="headerContent">
             <% if (Parse.User.current()) { %>
+                <%= this.model.get('username') %>
                 <button class="addPhoto">Post a new photo!</button>
             <% } %>
             <a href="#/"><h1>PhotoParser</h1></a>
@@ -45,53 +47,34 @@
         </script>
 
 
-
         <script type="text/template" data-template-name="otherUser/index">
 
+        <div class="followData">
             <button class="follow">Follow this user</button>
             # of Posts || # of Followers || # Following
-
-            <ul>
-              <% _.each(posts, function(post){ %>
-                <li>
-                <div>
-                <h3>
-                 <%= post.title %>
-                 </h3>
-
-                 <a href="">
-
-                 <% if(post.image) { %>
-                  <img style="width: 200px;" src="<%= post.image %>">
-                <% } %>
-
-                </a>
-
-                </div>
-                </li>
-              <% }); %>
-            </ul>
+        </div>
 
         </script>
-
-
 
 
         <script type="text/template" data-template-name="photoListItem">
             <a href="#/post/<%= post.objectId %>"><img style="width: 200px;" src="<%= post.image %>" /></a>
         </script>
 
+
         <script type="text/template" data-template-name="singlePhoto">
-            Hi. <img src='<%= post.image %>' />
+            <img src='<%= post.image %>' /> <button class="like">Like this photo</button> || <button class="composeComment">Comment</button>
+            <aside></aside>
+        </script>
+
+        <script type="text/template" data-template-name="commentForm">
+        Talk yo noize! <input type="text" class="commentBody"> <input type="submit">
         </script>
 
 
         <script type="text/template" data-template-name="posts/index">
 
             <ul>
-                <li>
-                <button class="addPhoto">Post a new photo!</button>
-                </li>
               <% _.each(posts, function(post){ %>
                 <li>
                 <div>
@@ -133,6 +116,7 @@
 
         </script>
 
+
         <script type="text/template" data-template-name="login">
             <h1>LogIn to PhotoParser.</h1>
             <form>
@@ -144,6 +128,7 @@
             </form>
         </script>
 
+
         <script type="text/template" data-template-name="register">
             <h1>Welcome to PhotoParser.</h1>
             <form>
@@ -153,6 +138,7 @@
             <input type="submit">
             </form>
         </script>
+
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
