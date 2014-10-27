@@ -71,10 +71,22 @@
                  <%= comment.commentBody %>
                  </li>
               <% }); %>
-            </ul>        -->
+            </ul>      -->  
         <script type="text/template" data-template-name="singlePhoto">
             <img src='<%= post.image %>' /> Likes: 0<%= post.likes %> <button class="like">Like this photo</button> || <button class="composeComment">Comment</button>
 
+            <div class ="listOfComments">
+            <ul>
+            <li><h2>COMMENTS</h2></li>
+              <% 
+              console.log("Comments",comments);
+              _.each(comments, function(comment){ %>
+                <li>
+                 <%= comment.commentBody %>
+                 </li>
+              <% }); %>
+            </ul>
+            </div>
 
             <aside></aside>
 

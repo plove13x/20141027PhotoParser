@@ -355,7 +355,7 @@ App.SinglePhotoView = Parse.View.extend({
 	},
 
 	render: function(){
-		this.$el.html( this.template({post: this.model.toJSON() }));
+		this.$el.html( this.template({post: this.model.toJSON(), comments: this.collection.toJSON() }));
 	}
 });
 
@@ -457,13 +457,17 @@ App.AppRouter = Parse.Router.extend({
 
 	post: function(post_id){
 
-		// var query = new Parse.Query(App.Post);
-		// query.equalTo('objectId', post_id);
+		var query = new Parse.Query(App.Post);
+		query.equalTo('objectId', post_id);
 
-		// var commentQuery = new Parse.Query(App.Comment);
-		// commentQuery.matchesQuery('post', query); 
-		// var collection = commentQuery.collection();
-		// collection.fetch();
+		var commentQuery = new Parse.Query(App.Comment);
+		commentQuery.matchesQuery('post', query); 
+		var collection = commentQuery.collection();
+		collection.fetch().then(function(){
+			console.log(collection);
+
+
+
 
 
 		var query = new Parse.Query(App.Post);
@@ -472,9 +476,20 @@ App.AppRouter = Parse.Router.extend({
 			new App.SinglePhotoView({					// Institute Swap?
 				$container: $('.container'),
 				model: post,
-				// collection: collection
+				collection: collection
+				// comments: collection
 			});
 		})
+
+
+
+
+
+
+		});
+
+
+
 
 
 	},

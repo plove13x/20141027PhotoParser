@@ -53,6 +53,12 @@ header {
     }
 }
 
+.listOfComments {
+    li {
+        display: list-item;
+    }
+}
+
 aside {
     display: inline-block;
 }
