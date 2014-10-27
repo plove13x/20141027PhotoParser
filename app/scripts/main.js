@@ -465,6 +465,7 @@ App.AppRouter = Parse.Router.extend({
 		// var collection = commentQuery.collection();
 		// collection.fetch();
 
+
 		var query = new Parse.Query(App.Post);
 		query.equalTo('objectId', post_id);
 		query.first().then(function(post){
@@ -474,6 +475,8 @@ App.AppRouter = Parse.Router.extend({
 				// collection: collection
 			});
 		})
+
+
 	},
 
 	postsIndex: function(){
