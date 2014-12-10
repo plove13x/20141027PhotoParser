@@ -1,0 +1,174 @@
+<!doctype html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <title>20141027PhotoParser</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <link rel="stylesheet" href="styles/vendor.css">
+
+        <link rel="stylesheet" href="styles/main.css">
+
+        <script src="scripts/vendor/modernizr.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+
+        <script type="text/template" data-template-name="base">
+            <header><button>Logout</button></header>
+            <div class="container"></div>
+        </script>
+
+
+        <script type="text/template" data-template-name="headerContent">
+            <% if (Parse.User.current()) { %>
+                <%= this.model.get('username') %>
+                <button class="addPhoto">Post a new photo!</button>
+            <% } %>
+            <a href="#/"><h1>PhotoParser</h1></a>
+            <% if(!Parse.User.current()) { %>
+            <button class="logIn">LogIn</button>
+            <% } else { %>
+            <button class="logOut">LogOut</button>
+            <% } %>
+        </script>
+
+
+        <script type="text/template" data-template-name="otherUser/index">
+
+        <div class="followData">
+            <button class="follow">Follow this user</button>
+            # of Posts || # of Followers || # Following
+        </div>
+
+        </script>
+
+
+        <script type="text/template" data-template-name="photoListItem">
+            <a href="#/post/<%= post.objectId %>"><img style="width: 200px;" src="<%= post.image %>" /></a>
+            Likes: 0<%= post.likes %>
+        </script>
+
+
+
+
+<!--      <ul>
+              <% _.each(comments, function(comment){ %>
+                <li>
+                 <%= comment.commentBody %>
+                 </li>
+              <% }); %>
+            </ul>      -->  
+        <script type="text/template" data-template-name="singlePhoto">
+            <img src='<%= post.image %>' /> Likes: 0<%= post.likes %> <button class="like">Like this photo</button> || <button class="composeComment">Comment</button>
+
+            <div class ="listOfComments">
+            <ul>
+            <li><h2>COMMENTS</h2></li>
+              <% 
+              console.log("Comments",comments);
+              _.each(comments, function(comment){ %>
+                <li>
+                 <%= comment.commentBody %>
+                 </li>
+              <% }); %>
+            </ul>
+            </div>
+
+            <aside></aside>
+
+
+        </script>
+
+
+        <script type="text/template" data-template-name="commentForm">
+        Talk yo noize! <input type="text" class="commentBody"> <input type="submit">
+        </script>
+
+
+        <script type="text/template" data-template-name="posts/index">
+
+            <ul>
+              <% _.each(posts, function(post){ %>
+                <li>
+                <div>
+                <h3>
+                 <%= post.title %>
+                 </h3>
+
+                 <a href="">
+
+                 <% if(post.image) { %>
+                  <img style="width: 200px;" src="<%= post.image %>">
+                <% } %>
+
+                </a>
+
+                </div>
+                </li>
+              <% }); %>
+            </ul>
+
+        </script>
+
+
+        <script type="text/template" data-template-name="posts/create">
+            U WANT TO MAKE?
+            <form>
+                <input type="file" class="image">
+                <% if(model.image) { %>
+                <input type="text" placeholder="URL" class="url">
+                <input type="text" placeholder="Title" class="title">
+                <% } %>
+
+                <input type="submit">
+            </form>
+              
+            <% if(model.image) { %>
+            <img style="width: 200px;" src="<%= model.image %>">
+            <% } %>
+
+        </script>
+
+
+        <script type="text/template" data-template-name="login">
+            <h1>LogIn to PhotoParser.</h1>
+            <form>
+            <p><input class="username-input" type="text" placeholder="Username"></p>
+            <p><input class="email-input" type="text" placeholder="Email"></p>
+            <p><input class="password-input" type="password" placeholder="Password"></p>
+            <input type="submit">
+            <p><a href="#register">New to PhotoParser? Create an account. (It&rsquo;s painless we promise.)</a></p>
+            </form>
+        </script>
+
+
+        <script type="text/template" data-template-name="register">
+            <h1>Welcome to PhotoParser.</h1>
+            <form>
+            <p><input class="username-input" type="text" placeholder="Username"></p>
+            <p><input class="email-input" type="text" placeholder="Email"></p>
+            <p><input class="password-input" type="password" placeholder="Password"></p>
+            <input type="submit">
+            </form>
+        </script>
+
+
+
+        
+
+        <script src="scripts/vendor.js"></script>
+
+        <script src="//www.parsecdn.com/js/parse-1.3.1.min.js"></script>
+
+        <script src="scripts/main.js"></script>
+
+        
+</body>
+</html>
